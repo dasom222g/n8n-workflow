@@ -1,0 +1,639 @@
+{
+  "name": "Github Auto Commit",
+  "nodes": [
+    {
+      "parameters": {
+        "guildIds": [
+          "1466605247555174492"
+        ],
+        "categoryIds": [
+          "1466605248238850220"
+        ],
+        "channelIds": [
+          "1466605535410520074"
+        ],
+        "pattern": "every",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-discord-trigger-new.discordTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        48
+      ],
+      "id": "5c85bd57-d58b-44c2-8837-5bb0b2f01514",
+      "name": "Discord Trigger",
+      "credentials": {
+        "discordBotTriggerApi": {
+          "id": "UEwufJEez10Ha2i8",
+          "name": "Discord Bot Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.content }}",
+        "options": {
+          "systemMessage": "=## Role\n너는 기술 전문 편집자다. 사용자의 단편화된 메모를 분석하여 정해진 규칙에 따르며 'thoughtbot/til' 스타일의 구조화된 기술 문서(TIL)를 작성하고, 시스템 처리가 용이하도록 JSON 형식으로 출력한다.\n\n## Writing Rules\n1. **명명 규칙 (Filename)**: `YYYY-MM-DD-제목.md` 형식을 엄수한다.\n   - 모든 공백은 하이픈(`-`)으로 대체한다.\n   - 특수문자는 사용하지 않으며, 한글 제목을 허용한다.\n   - 예: 2026-01-30-Clawdbot-프롬프트-최적화-전략.md\n\n### 추가 정보\n- 오늘 날짜: {{ $now.toFormat('yyyy-MM-dd') }}\n\n2. **디렉토리 분류 (Folder)**: 내용에 따라 다음 3가지 중 하나를 선택한다.\n   - `n8n`: 워크플로우 설계 및 노드 활용\n   - `python`: 파이썬 문법 및 라이브러리 분석\n   - `ai-agent`: LLM 에이전트 구축 및 프롬프트 설계\n\n3. **문서 구조 (Markdown Content)**: 반드시 다음 3단 구조를 포함한다.\n   - **Context**: 학습 배경 또는 해결하려는 문제 상황 설명.\n   - **Core**: 실제 작동하는 코드 스니펫, 로직, 또는 n8n 설정값 (Markdown 코드 블록 활용).\n   - **Insight**: 실행 결과에 대한 기술적 검증 및 본인만의 견해.\n\n4. **기술적 보강**: 사용자의 입력이 파편화되어 있더라도, 기술적으로 정확한 용어를 사용하고 필요한 경우 관련 개념 설명을 보강하여 문서의 완결성을 높인다.\n\n## 작성 규칙\n1. **헤더 스타일**: 섹션 제목은 반드시 `###` (H3) 레벨만 사용하세요. (자동 밑줄 방지)\n2. **수평선 및 순번 금지**: 본문 내 `---` 사용 및 리스트에 숫자(1, 2, 3) 붙이기를 엄격히 금지합니다. 불렛 포인트(`*`)만 사용하세요.\n3. **출처 표기 (필수)**: 모든 기술적 정보는 검색을 통해 검증해야 하며, **### Insight** 섹션 최하단에 `**출처:** [문서 제목](URL)` 형식으로 참고한 모든 링크를 반드시 포함하세요. 출처가 없는 정보는 기록에서 제외합니다.\n4. **글로벌 검색**: 기술적 정확도를 위해 반드시 영문 키워드로 먼저 검색한 뒤 한국어로 정리하세요.\n\n## Tool Use Rule\n\n### 정보가 불확실하거나 최신 업데이트가 필요한 경우, 반드시 'SerpAPI' 도구를 사용하여 검색하세요.\n\n1. 사용자의 입력이 한글이라도 기술적 정확성을 위해 반드시 **영어(English) 키워드로 변환하여 먼저 검색해 주세요.**\n2. n8n Docs, GitHub Issues, Anthropic API Docs와 같은 **영어권 공식 문서를 최우선으로 탐색**하여 정확한 정보를 확보하세요.\n3. 확보된 영문 기술 정보는 한국어 사용자가 이해하기 가장 쉬운 용어로 **번역 및 요약하여 본문을 작성해 주세요.**\n4. 모든 기술 용어는 필요 시 **영문을 병기**(예: 도구 호출(Tool Calling))하여 정보의 정확성을 높여 주세요.\n\n## Output Format (JSON)\n\"\"\"절대 불필요한 텍스트 없이 오로지 JSON형태로만 응답하세요\"\"\"\n오직 다음 구조의 JSON 데이터만 응답하며, 코드 블록(```json)이나 기타 텍스트는 생략한다.\n{\n  \"folder\": \"선택된 폴더명\",\n  \"filename\": \"생성된 파일명\",\n  \"content\": \"Markdown 본문 전체\",\n  \"summary\": \"개발자 컨펌을 위한 3줄 요약\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        288,
+        32
+      ],
+      "id": "d401955d-94b0-4380-8a9d-30d04d5ae0fb",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-5-20250929",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        2672,
+        432
+      ],
+      "id": "25f62151-be72-486f-8888-145600e9fb43",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "J9NPgKnOZwwysf1P",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "chutzrit-session"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        240
+      ],
+      "id": "3adceb12-2a0b-4038-bbf8-f9af77aa5372",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {
+          "google_domain": "google.com"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        496,
+        224
+      ],
+      "id": "88d45adc-4609-4296-960b-cbfb93061b17",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "cUyYTVQOSWIS9uhO",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {
+          "maxTokens": 3000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        256
+      ],
+      "id": "53ea4529-8e6f-497e-9dd8-d61b85b80cf0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "RbPhAxiXSHpIxZx5",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"folder\": {\n          \"type\": \"string\"\n        },\n        \"filename\": {\n          \"type\": \"string\"\n        },\n        \"content\": {\n          \"type\": \"string\"\n        },\n        \"summary\": {\n          \"type\": \"string\"\n        }\n\t}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2960,
+        432
+      ],
+      "id": "904db359-96a3-4487-aaef-1cba02d61746",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "// AI Agent의 출력값(output)을 가져옵니다.\nconst inputData = $input.first().json.output[0].content[0].text;\n\n// 텍스트 속에서 { }로 감싸진 JSON 부분만 찾아내는 정규식입니다.\nconst jsonMatch = inputData.match(/\\{[\\s\\S]*\\}/);\n\nif (jsonMatch) {\n  try {\n    // 찾은 JSON 문자열을 실제 객체로 변환합니다.\n    const parsedJson = JSON.parse(jsonMatch[0]);\n    \n    // 다음 노드에서 쓰기 편하게 리턴합니다.\n    return [\n      {\n        json: parsedJson\n      }\n    ];\n  } catch (e) {\n    throw new Error(\"JSON 파싱 중 오류가 발생했습니다: \" + e.message);\n  }\n} else {\n  throw new Error(\"출력값에서 JSON 형식을 찾을 수 없습니다.\");\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        0
+      ],
+      "id": "73c1d474-30cc-493e-b0ab-b9d233fd0523",
+      "name": "JSON형태로 파싱"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "dasom222g",
+          "mode": "list",
+          "cachedResultName": "dasom222g",
+          "cachedResultUrl": "https://github.com/dasom222g"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "TIL",
+          "mode": "list",
+          "cachedResultName": "TIL",
+          "cachedResultUrl": "https://github.com/dasom222g/TIL"
+        },
+        "filePath": "README.md"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2688,
+        592
+      ],
+      "id": "0b943e68-989b-446c-ac1e-98b105dd984d",
+      "name": "Edit a file",
+      "webhookId": "04555ca0-32c1-49bf-84cb-f00f3e6411b2",
+      "credentials": {
+        "githubApi": {
+          "id": "jut3qtUIGxZ55Lvu",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=만약 이 콘텐츠의 value값이 영문으로 작성되어 있다면 한글로 다시 작성해서 원본과 동일한 형태로 출력하세요\n---\n {{ $json.output }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        0
+      ],
+      "id": "7c9b9453-42dd-49db-9d55-3538d706cb67",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "RbPhAxiXSHpIxZx5",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "dasom222g",
+          "mode": "list",
+          "cachedResultName": "dasom222g",
+          "cachedResultUrl": "https://github.com/dasom222g"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "TIL",
+          "mode": "list",
+          "cachedResultName": "TIL",
+          "cachedResultUrl": "https://github.com/dasom222g/TIL"
+        },
+        "filePath": "README.md",
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2896,
+        576
+      ],
+      "id": "76e0c884-599c-4478-b442-1608ce870ce7",
+      "name": "Get a file",
+      "webhookId": "248a6cea-931f-4624-bb71-3e1d2c13ee9b",
+      "credentials": {
+        "githubApi": {
+          "id": "jut3qtUIGxZ55Lvu",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. TIL 생성 노드에서 파일 경로와 이름을 가져옵니다.\n// $('GitHub 노드이름') 부분을 실제 노드 이름으로 변경하세요.\nconst contentNode = $('Create a TIL File').first().json.content; \nconst filePath = contentNode.path; // 예: \"n8n/2026-01-30-Anthropic-모델-에러-해결.md\"\nconst fileName = contentNode.name; // 예: \"2026-01-30-Anthropic-모델-에러-해결.md\"\nconst folder = filePath.split('/')[0]; // 폴더명 추출 (n8n, python, ai-agent 등)\n\n// 2. 현재 노드에서 가져온 README 원본 내용\nlet readmeText = $input.first().json.data\n\n// 3. 새 링크 생성 (날짜 제거 및 하이픈을 공백으로 변경)\nconst displayTitle = fileName\n  .replace('.md', '')                // 확장자 제거\n\nconst newLink = `- [${displayTitle}](${filePath})`;\n\n// 4. 중복 체크: 이미 README에 해당 파일명이 있다면 원본 그대로 반환\nif (readmeText.includes(fileName)) {\n  return { updatedReadme: readmeText, status: \"skipped\" };\n}\n\n// 5. 삽입 위치 검색 (id=\"폴더명\"을 가진 strong 태그를 찾습니다)\nconst targetId = `id=\"${folder}\"`;\nconst regex = new RegExp(`(<strong\\\\s+[^>]*${targetId}[^>]*>.*?<\\\\/summary>)`, 's');\n\nif (readmeText.includes(targetId)) {\n  // 매칭되는 섹션 바로 아래에 새 링크 삽입\n  const updatedReadme = readmeText.replace(regex, `$1\\n\\n${newLink}`);\n  return { \n    updatedReadme: updatedReadme, \n    folder: folder, \n    status: \"updated\" \n  };\n}\n\n// 해당 카테고리를 찾지 못한 경우 (에러 방지를 위해 원본 반환)\nreturn { updatedReadme: readmeText, status: \"error\", reason: \"카테고리 ID를 찾을 수 없음\" };\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        0
+      ],
+      "id": "a1458539-5f17-49b9-a0ee-8e6bfac41207",
+      "name": "README.md index 업데이트용파싱"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1466605247555174492",
+          "mode": "list",
+          "cachedResultName": "후츠릿 자동화 연구소",
+          "cachedResultUrl": "https://discord.com/channels/1466605247555174492"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1466605535410520074",
+          "mode": "list",
+          "cachedResultName": "오늘의기록",
+          "cachedResultUrl": "https://discord.com/channels/1466605247555174492/1466605535410520074"
+        },
+        "content": "=✅ **TIL 기록 완료!**\n\n📌 **기록된 제목**: {{ $('JSON형태로 파싱').item.json.filename }}\n🍰 **기록된 카테고리**: {{ $('JSON형태로 파싱').item.json.folder }}\n📖 **요약 내용**:\n{{ $('JSON형태로 파싱').item.json.summary }}\n\n🚀 **GitHub README 인덱스가 최신화되었습니다.**\n\n[👉🏻 기록된 TIL 바로보기](https://github.com/dasom222g/TIL/blob/main/{{ $('Create a TIL File').item.json.content.path }})",
+        "options": {},
+        "embeds": {
+          "values": [
+            {
+              "inputMethod": "json"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        0
+      ],
+      "id": "60227a06-0218-4122-b1f5-2498f7239713",
+      "name": "완료메시지 전송",
+      "webhookId": "0951513c-c0fa-4622-a7c5-3b11900b4520",
+      "credentials": {
+        "discordBotApi": {
+          "id": "QrVqVu6KmwZGCshd",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "dasom222g",
+          "mode": "list",
+          "cachedResultName": "dasom222g",
+          "cachedResultUrl": "https://github.com/dasom222g"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "TIL",
+          "mode": "list",
+          "cachedResultName": "TIL",
+          "cachedResultUrl": "https://github.com/dasom222g/TIL"
+        },
+        "filePath": "={{ $json.folder }}/{{ $json.filename }}",
+        "fileContent": "={{ $json.content }}",
+        "commitMessage": "=Docs: Add TIL - {{ $json.filename }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "22e8386e-516e-4291-96f7-4dccc9aae498",
+      "name": "Create a TIL File",
+      "webhookId": "5a65bf67-8ae7-44dc-bc26-78f4b298cc6c",
+      "credentials": {
+        "githubApi": {
+          "id": "jut3qtUIGxZ55Lvu",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "dasom222g",
+          "mode": "list",
+          "cachedResultName": "dasom222g",
+          "cachedResultUrl": "https://github.com/dasom222g"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "TIL",
+          "mode": "list",
+          "cachedResultName": "TIL",
+          "cachedResultUrl": "https://github.com/dasom222g/TIL"
+        },
+        "filePath": "README.md",
+        "asBinaryProperty": false,
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2576,
+        768
+      ],
+      "id": "f51ce712-dcdc-4364-964f-b5d942d3f3ff",
+      "name": "Get a README.md",
+      "webhookId": "3d9ff7b8-67e1-4bb7-8bfc-b46ad6f2d955",
+      "credentials": {
+        "githubApi": {
+          "id": "jut3qtUIGxZ55Lvu",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. 데이터 가져오기 (GitHub 노드 결과값)\nconst githubNode = $input.first().json;\nconst encoded = githubNode.content.replace(/\\s/g, ''); \nconst sha = githubNode.sha;\n\n// 2. Base64 -> 한글 변환\nconst decodeB64 = (str) => {\n    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';\n    let bytes = [];\n    for (let i = 0; i < str.length; i += 4) {\n        let n = (chars.indexOf(str[i]) << 18) | (chars.indexOf(str[i+1]) << 12) |\n                ((str[i+2] !== '=' ? chars.indexOf(str[i+2]) : 0) << 6) |\n                (str[i+3] !== '=' ? chars.indexOf(str[i+3]) : 0);\n        bytes.push((n >> 16) & 255);\n        if (str[i+2] !== '=') bytes.push((n >> 8) & 255);\n        if (str[i+3] !== '=') bytes.push(n & 255);\n    }\n    // UTF-8 바이트를 문자열로 복원\n    let res = \"\";\n    for (let i = 0; i < bytes.length; ) {\n        let c = bytes[i++];\n        if (c < 128) res += String.fromCharCode(c);\n        else if (c > 191 && c < 224) res += String.fromCharCode(((c & 31) << 6) | (bytes[i++] & 63));\n        else res += String.fromCharCode(((c & 15) << 12) | ((bytes[i++] & 63) << 6) | (bytes[i++] & 63));\n    }\n    return res;\n}\n\n// README 원본 내용\nconst readmeText = decodeB64(encoded);\n\n// 2. TIL 생성 노드에서 파일 경로와 이름을 가져옵니다.\n// $('GitHub 노드이름') 부분을 실제 노드 이름으로 변경하세요.\nconst contentNode = $('Create a TIL File').first().json.content; \nconst filePath = contentNode.path; // 예: \"n8n/2026-01-30-Anthropic-모델-에러-해결.md\"\nconst fileName = contentNode.name; // 예: \"2026-01-30-Anthropic-모델-에러-해결.md\"\nconst folder = filePath.split('/')[0]; // 폴더명 추출 (n8n, python, ai-agent 등)\n\n// 3. 새 링크 생성 (날짜 제거 및 하이픈을 공백으로 변경)\nconst displayTitle = fileName\n  .replace('.md', '')                // 확장자 제거\n\nconst newLink = `- [${displayTitle}](${filePath})`;\n\n// 4. 중복 체크: 이미 README에 해당 파일명이 있다면 원본 그대로 반환\nif (readmeText.includes(fileName)) {\n  return { updatedReadme: readmeText, sha, status: \"skipped\" };\n}\n\n// 5. 삽입 위치 검색 (id=\"폴더명\"을 가진 strong 태그를 찾습니다)\nconst targetId = `id=\"${folder}\"`;\nconst regex = new RegExp(`(<strong\\\\s+[^>]*${targetId}[^>]*>.*?<\\\\/summary>)`, 's');\n\nif (readmeText.includes(targetId)) {\n  // 매칭되는 섹션 바로 아래에 새 링크 삽입\n  const updatedReadme = readmeText.replace(regex, `$1\\n\\n${newLink}`);\n  return { \n    updatedReadme, \n    sha,\n    folder, \n    status: \"updated\" \n  };\n}\n\n// 해당 카테고리를 찾지 못한 경우 (에러 방지를 위해 원본 반환)\nreturn { updatedReadme: readmeText, sha, status: \"error\", reason: \"카테고리 ID를 찾을 수 없음\" };\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        768
+      ],
+      "id": "1b38b9e9-a68e-4ff9-b261-6f5399f8246d",
+      "name": "README.md index 업데이트용파싱 (ecoding)"
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/dasom222g/TIL/main/README.md",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "6cf42866-1c57-4d27-b762-6f045ea6c4ab",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "dasom222g",
+          "mode": "list",
+          "cachedResultName": "dasom222g",
+          "cachedResultUrl": "https://github.com/dasom222g"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "TIL",
+          "mode": "list",
+          "cachedResultName": "TIL",
+          "cachedResultUrl": "https://github.com/dasom222g/TIL"
+        },
+        "filePath": "README.md",
+        "fileContent": "={{ $json.updatedReadme }}",
+        "commitMessage": "=Docs: update README index - [{{ $json.folder }}]"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1680,
+        0
+      ],
+      "id": "cf0f08eb-1d71-4923-88c9-6a90df1e1cfd",
+      "name": "Edit a README.md",
+      "webhookId": "6efdec6c-9812-423d-ae0b-fd49326ab20d",
+      "credentials": {
+        "githubApi": {
+          "id": "jut3qtUIGxZ55Lvu",
+          "name": "GitHub account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Discord Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        []
+      ]
+    },
+    "JSON형태로 파싱": {
+      "main": [
+        [
+          {
+            "node": "Create a TIL File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "JSON형태로 파싱",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        []
+      ]
+    },
+    "README.md index 업데이트용파싱": {
+      "main": [
+        [
+          {
+            "node": "Edit a README.md",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a TIL File": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a README.md": {
+      "main": [
+        [
+          {
+            "node": "README.md index 업데이트용파싱 (ecoding)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "README.md index 업데이트용파싱 (ecoding)": {
+      "main": [
+        []
+      ]
+    },
+    "Edit a README.md": {
+      "main": [
+        [
+          {
+            "node": "완료메시지 전송",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "README.md index 업데이트용파싱",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "2ea10061-d8cf-4dc1-bc5f-55a01fe1b9a6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1cb4c94b85e06d010fc9bd4987344346559225ff459eb4009b5ebce8b8132f32"
+  },
+  "id": "Blt1f0Pj8cUORVvXgxuUt",
+  "tags": []
+}
